@@ -44,8 +44,16 @@ std::string FetchSignedCredsUrl(
   return BuildUrl(path, PREFIX_V1, ServerTypes::kPromotion);
 }
 
-std::string GetReedemSuggestionsUrl() {
-  return BuildUrl("/suggestions", PREFIX_V1, ServerTypes::kPromotion);
+std::string GetReedemSuggestionsUrl(
+    const ledger::RewardsType type,
+    const ledger::ContributionProcessor processor) {
+  std::string path = "/suggestions";
+  if (type == ledger::RewardsType::AUTO_CONTRIBUTE &&
+      processor == ledger::ContributionProcessor::UPHOLD) {
+    path = "/v1/autocontribute/votes";
+  }
+
+  return BuildUrl(path, PREFIX_V1, ServerTypes::kPromotion);
 }
 
 std::string ReportClobberedClaimsUrl() {

@@ -49,10 +49,14 @@ bool HasTokenExpired(const ledger::UnblindedToken& token) {
 
 std::string GenerateTokenPayload(
     const std::string& publisher_key,
-    const ledger::RewardsType type,
+    ledger::ContributionInfoPtr contribution,
     const std::vector<ledger::UnblindedToken>& list) {
+  if (!contribution) {
+    return "";
+  }
+
   base::Value suggestion(base::Value::Type::DICTIONARY);
-  suggestion.SetStringKey("type", ConvertTypeToString(type));
+  suggestion.SetStringKey("type", ConvertTypeToString(contribution->type));
   suggestion.SetStringKey("channel", publisher_key);
 
   std::string suggestion_json;
@@ -421,7 +425,7 @@ void Unblinded::OnProcessTokens(
 
     SendTokens(
         publisher->publisher_key,
-        contribution->type,
+        std::move(contribution),
         token_list,
         callback);
     return;
@@ -485,10 +489,10 @@ void Unblinded::CheckIfCompleted(ledger::ContributionInfoPtr contribution) {
 
 void Unblinded::SendTokens(
     const std::string& publisher_key,
-    const ledger::RewardsType type,
+    ledger::ContributionInfoPtr contribution,
     const std::vector<ledger::UnblindedToken>& list,
     ledger::ResultCallback callback) {
-  if (publisher_key.empty() || list.empty()) {
+  if (publisher_key.empty() || list.empty() || !contribution) {
     return callback(ledger::Result::LEDGER_ERROR);
   }
 
@@ -507,11 +511,13 @@ void Unblinded::SendTokens(
 
   const std::string payload = GenerateTokenPayload(
       publisher_key,
-      type,
+      contribution->Clone(),
       list);
 
   const std::string url =
-      braveledger_request_util::GetReedemSuggestionsUrl();
+      braveledger_request_util::GetReedemSuggestionsUrl(
+          contribution->type,
+          contribution->processor);
 
   ledger_->LoadURL(
       url,
@@ -534,8 +540,7 @@ void Unblinded::OnSendTokens(
     return;
   }
 
-  ledger_->DeleteUnblindedTokens(token_id_list, [](const ledger::Result _){});
-  callback(ledger::Result::LEDGER_OK);
+  ledger_->DeleteUnblindedTokens(token_id_list, callback);
 }
 
 void Unblinded::ContributionCompleted(

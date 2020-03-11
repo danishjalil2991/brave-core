@@ -64,7 +64,7 @@ void Uphold::StartContribution(
   if (!info) {
     ContributionCompleted(
         ledger::Result::LEDGER_ERROR,
-        false,
+        "",
         contribution_id,
         amount,
         "",
@@ -93,7 +93,7 @@ void Uphold::StartContribution(
 
 void Uphold::ContributionCompleted(
     const ledger::Result result,
-    const bool created,
+    const std::string& transaction_id,
     const std::string& contribution_id,
     const double fee,
     const std::string& publisher_key,
@@ -111,7 +111,8 @@ void Uphold::ContributionCompleted(
       ledger_->UpdateContributionInfoContributedAmount(
         contribution_id,
         publisher_key,
-        [](const ledger::Result){});
+        callback);
+      return;
     }
   }
 
@@ -194,10 +195,11 @@ void Uphold::OnFetchBalance(
   callback(ledger::Result::LEDGER_ERROR, 0.0);
 }
 
-void Uphold::TransferFunds(double amount,
-                           const std::string& address,
-                           ledger::ExternalWalletPtr wallet,
-                           TransactionCallback callback) {
+void Uphold::TransferFunds(
+    const double amount,
+    const std::string& address,
+    ledger::ExternalWalletPtr wallet,
+    ledger::TransactionCallback callback) {
   Transaction transaction;
   transaction.address = address;
   transaction.amount = amount;
@@ -308,7 +310,7 @@ void Uphold::SaveTransferFee(ledger::TransferFeePtr transfer_fee) {
 
 void Uphold::OnTransferFeeCompleted(
     const ledger::Result result,
-    const bool created,
+    const std::string& transaction_id,
     const ledger::TransferFee& transfer_fee) {
   if (result == ledger::Result::LEDGER_OK) {
     ledger_->RemoveTransferFee(ledger::kWalletUphold, transfer_fee.id);

@@ -13,6 +13,7 @@
 #include <string>
 
 #include "base/gtest_prod_util.h"
+#include "bat/ledger/internal/contribution/contribution_sku.h"
 #include "bat/ledger/ledger.h"
 
 namespace bat_ledger {
@@ -80,6 +81,19 @@ class Contribution {
 
   void CheckContributionQueue();
 
+  void TransferFunds(
+      const double amount,
+      const std::string& destination,
+      ledger::ExternalWalletPtr wallet,
+      ledger::TransactionCallback callback);
+
+  void SKUAutoContribution(
+      const double amount,
+      ledger::ExternalWalletPtr wallet,
+      ledger::ResultCallback callback);
+
+  void StartUnblinded(const std::string& contribution_id);
+
  private:
   void StartAutoContribute(const ledger::Result result);
 
@@ -102,14 +116,20 @@ class Contribution {
   void OnEntrySaved(
       const ledger::Result result,
       const std::string& contribution_id,
-      const std::string& current_wallet_type,
+      const std::string& wallet_type,
+      const double amount,
       const ledger::Balance& balance,
       const std::string& queue_string);
 
-  void OnProcessExternalWalletSaved(
+  void OnSKUCompleted(
       const ledger::Result result,
-      const std::string& contribution_id,
-      base::flat_map<std::string, double> wallet_balances);
+      const std::string& contribution_id);
+
+  void OnQueueSaved(
+    const ledger::Result result,
+    const std::string& wallet_type,
+    const ledger::Balance& balance,
+    const std::string& queue_string);
 
   void Process(
       ledger::ContributionQueuePtr queue,
@@ -122,6 +142,7 @@ class Contribution {
   bat_ledger::LedgerImpl* ledger_;  // NOT OWNED
   std::unique_ptr<Unverified> unverified_;
   std::unique_ptr<Unblinded> unblinded_;
+  std::unique_ptr<ContributionSKU> sku_;
   std::unique_ptr<braveledger_uphold::Uphold> uphold_;
   std::unique_ptr<ContributionMonthly> monthly_;
   std::unique_ptr<ContributionAC> ac_;
