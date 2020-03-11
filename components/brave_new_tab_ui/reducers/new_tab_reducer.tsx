@@ -475,6 +475,16 @@ export const newTabReducer: Reducer<NewTab.State | undefined> = (state: NewTab.S
       }
       break
 
+    case types.ON_BINANCE_USER_TLD:
+      state = { ...state }
+      state = {
+        ...state,
+        binanceState: {
+          userTLD: payload.userTLD
+        }
+      }
+      break
+
     default:
       break
   }
