@@ -43,7 +43,7 @@ import org.chromium.chrome.browser.BraveRewardsNativeWorker;
 import org.chromium.chrome.browser.BraveRewardsPanelPopup;
 import org.chromium.chrome.browser.preferences.BravePrefServiceBridge;
 import org.chromium.chrome.browser.util.ImageUtils;
-import org.chromium.chrome.browser.ntp_sponsored_images.NTPSponsoredImagesBridge;
+import org.chromium.chrome.browser.ntp_sponsored_images.NTPBackgroundImagesBridge;
 import org.chromium.chrome.browser.preferences.BravePref;
 import org.chromium.chrome.browser.preferences.BravePrefServiceBridge;
 
@@ -140,18 +140,18 @@ public class NTPUtil {
         if (sponsoredTab.shouldShowBanner()) {
             if (BraveRewardsPanelPopup.isBraveRewardsEnabled()) {
                 if (BraveAdsNativeHelper.nativeIsBraveAdsEnabled(Profile.getLastUsedProfile())) {
-                    if (ntpImage instanceof NTPSponsoredImagesBridge.Wallpaper) {
+                    if (ntpImage instanceof NTPBackgroundImagesBridge.Wallpaper) {
                         return SponsoredImageUtil.BR_ON_ADS_ON;
                     }
                 } else if(BraveAdsNativeHelper.nativeIsLocaleValid(Profile.getLastUsedProfile())) {
-                    if (ntpImage instanceof NTPSponsoredImagesBridge.Wallpaper) {
+                    if (ntpImage instanceof NTPBackgroundImagesBridge.Wallpaper) {
                         return SponsoredImageUtil.BR_ON_ADS_OFF ;
                     } else {
                         return SponsoredImageUtil.BR_ON_ADS_OFF_BG_IMAGE;
                     }
                 }
             } else {
-                if (ntpImage instanceof NTPSponsoredImagesBridge.Wallpaper && !mBraveRewardsNativeWorker.IsCreateWalletInProcess()) {
+                if (ntpImage instanceof NTPBackgroundImagesBridge.Wallpaper && !mBraveRewardsNativeWorker.IsCreateWalletInProcess()) {
                     return SponsoredImageUtil.BR_OFF;
                 }
             }
@@ -255,8 +255,8 @@ public class NTPUtil {
         float centerPointX;
         float centerPointY;
 
-        if (ntpImage instanceof NTPSponsoredImagesBridge.Wallpaper) {
-            NTPSponsoredImagesBridge.Wallpaper mWallpaper = (NTPSponsoredImagesBridge.Wallpaper) ntpImage;
+        if (ntpImage instanceof NTPBackgroundImagesBridge.Wallpaper) {
+            NTPBackgroundImagesBridge.Wallpaper mWallpaper = (NTPBackgroundImagesBridge.Wallpaper) ntpImage;
             try {
                 Uri imageFileUri = Uri.parse("file://"+mWallpaper.getImagePath());
                 InputStream inputStream = mContext.getContentResolver().openInputStream(imageFileUri);
@@ -343,8 +343,8 @@ public class NTPUtil {
     	return false;
     }
 
-    public static NTPImage getNTPImage(NTPSponsoredImagesBridge mNTPSponsoredImagesBridge) {
-    	NTPSponsoredImagesBridge.Wallpaper mWallpaper = mNTPSponsoredImagesBridge.getCurrentWallpaper();
+    public static NTPImage getNTPImage(NTPBackgroundImagesBridge mNTPBackgroundImagesBridge) {
+    	NTPBackgroundImagesBridge.Wallpaper mWallpaper = mNTPBackgroundImagesBridge.getCurrentWallpaper();
     	if (mWallpaper != null) {
     		return mWallpaper;
     	} else {

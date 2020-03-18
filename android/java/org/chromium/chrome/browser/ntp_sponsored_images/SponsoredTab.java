@@ -13,17 +13,17 @@ import org.chromium.chrome.browser.ntp_sponsored_images.SponsoredImageUtil;
 import org.chromium.chrome.browser.tabmodel.TabModel;
 import org.chromium.chrome.browser.ChromeTabbedActivity;
 import org.chromium.chrome.browser.BraveRewardsHelper;
-import org.chromium.chrome.browser.ntp_sponsored_images.NTPSponsoredImagesBridge;
+import org.chromium.chrome.browser.ntp_sponsored_images.NTPBackgroundImagesBridge;
 
 public class SponsoredTab{
-    private NTPSponsoredImagesBridge mNTPSponsoredImagesBridge;
+    private NTPBackgroundImagesBridge mNTPBackgroundImagesBridge;
     private NTPImage ntpImage;
     private int tabIndex;
     private boolean mShouldShowBanner;
     private boolean isMoreTabs;
 
-    public SponsoredTab(NTPSponsoredImagesBridge mNTPSponsoredImagesBridge) {
-        this.mNTPSponsoredImagesBridge = mNTPSponsoredImagesBridge;
+    public SponsoredTab(NTPBackgroundImagesBridge mNTPBackgroundImagesBridge) {
+        this.mNTPBackgroundImagesBridge = mNTPBackgroundImagesBridge;
         ChromeTabbedActivity chromeTabbedActivity = BraveRewardsHelper.getChromeTabbedActivity();
         if(chromeTabbedActivity != null) {
             TabModel tabModel = chromeTabbedActivity.getCurrentTabModel();
@@ -31,7 +31,7 @@ public class SponsoredTab{
         }
 
         if (NTPUtil.shouldEnableNTPFeature(isMoreTabs)){
-            ntpImage = NTPUtil.getNTPImage(mNTPSponsoredImagesBridge);
+            ntpImage = NTPUtil.getNTPImage(mNTPBackgroundImagesBridge);
             tabIndex = SponsoredImageUtil.getTabIndex();
             updateBannerPref();
         }
@@ -41,7 +41,7 @@ public class SponsoredTab{
         if (ntpImage != null) {
             return ntpImage;
         } else {
-            return NTPUtil.getNTPImage(mNTPSponsoredImagesBridge);
+            return NTPUtil.getNTPImage(mNTPBackgroundImagesBridge);
         }
     }
 
