@@ -22,7 +22,7 @@ deps = {
     'url': 'https://github.com/brave/sync.git@4098493496b19f46c33a66b8867c69ee6d1a4568',
     'condition': 'checkout_android',
   },
-  "vendor/bat-native-usermodel": "https://github.com/brave-intl/bat-native-usermodel.git@45e32155af9897dbe1d5534dd36697ec4728bb75",
+  "vendor/bat-native-usermodel": "https://github.com/brave-intl/bat-native-usermodel.git@9ec3390e9c7d3adcb121c97b2ceac0348ee75f7c",
   "vendor/challenge_bypass_ristretto_ffi": "https://github.com/brave-intl/challenge-bypass-ristretto-ffi.git@c396fb4eb9e9bf63b89ae5a0ec0b5f201d43c7c5",
 }
 
